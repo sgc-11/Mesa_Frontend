@@ -3,7 +3,7 @@ import { Grid, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../subcomponents/PhotoSalesComps/Button';
 import PhotoCard from '../subcomponents/PhotoSalesComps/PhotoCard';
 
-interface Photo {
+export interface Photo {
   id: number;
   src: string;
   alt: string;

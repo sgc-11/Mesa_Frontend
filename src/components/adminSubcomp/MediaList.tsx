@@ -1,17 +1,17 @@
-// src/components/MediaList.tsx
-
 import React, { useEffect } from 'react';
 import { Button, Card, CardContent, Typography } from '@mui/material';
-import { Media } from './types';
+import { Media, Model } from './types';
 import api from '../../api';
 import MediaForm from './Forms/MediaForm';
 
 const MediaList: React.FC = () => {
   const [mediaItems, setMediaItems] = React.useState<Media[]>([]);
+  const [models, setModels] = React.useState<Model[]>([]);
   const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
     fetchMediaItems();
+    fetchModels();
   }, []);
 
   const fetchMediaItems = async () => {
@@ -20,6 +20,15 @@ const MediaList: React.FC = () => {
       setMediaItems(response.data);
     } catch (error) {
       console.error('Error fetching media items:', error);
+    }
+  };
+
+  const fetchModels = async () => {
+    try {
+      const response = await api.get('/models'); // Replace with the correct endpoint
+      setModels(response.data);
+    } catch (error) {
+      console.error('Error fetching models:', error);
     }
   };
 
@@ -42,12 +51,7 @@ const MediaList: React.FC = () => {
 
   const handleSaveMedia = async (mediaData: Omit<Media, 'id'>) => {
     try {
-      // Prepare data according to your API's expected format
-      const dataToSend = {
-        ...mediaData,
-        modelId: mediaData.model?.id,
-      };
-      const response = await api.post('/media', dataToSend);
+      const response = await api.post('/media', mediaData);
       setMediaItems([...mediaItems, response.data]);
       handleCloseForm();
     } catch (error) {
@@ -56,8 +60,8 @@ const MediaList: React.FC = () => {
   };
 
   return (
-    <div>
-      <Button variant="contained" color="primary" onClick={handleOpenForm} sx={{ mb: 2 }}>
+    <>
+      <Button variant="contained" onClick={handleOpenForm} sx={{ mb: 2 }}>
         Add New Media
       </Button>
 
@@ -65,15 +69,16 @@ const MediaList: React.FC = () => {
         open={open}
         handleClose={handleCloseForm}
         handleSave={handleSaveMedia}
+        models={models}
       />
 
       {mediaItems.map(item => (
         <Card key={item.id} sx={{ mb: 2 }}>
           <CardContent>
-            <Typography variant="h5">{item.description || 'No Description'}</Typography>
-            <Typography variant="body2">URL: {item.url}</Typography>
-            {item.price && <Typography variant="body2">Price: ${item.price}</Typography>}
-            {item.model && <Typography variant="body2">Model: {item.model.name}</Typography>}
+            <Typography variant="h6">{item.description || 'No Description'}</Typography>
+            <Typography>URL: {item.url}</Typography>
+            {item.price && <Typography>Price: ${item.price}</Typography>}
+            {item.model && <Typography>Model: {item.model.name}</Typography>}
             <Button
               variant="contained"
               color="error"
@@ -85,7 +90,7 @@ const MediaList: React.FC = () => {
           </CardContent>
         </Card>
       ))}
-    </div>
+    </>
   );
 };
 

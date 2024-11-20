@@ -3,7 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../subcomponents/PhotoSalesComps/Button';
 import { Card, CardContent } from '../subcomponents/PhotoSalesComps/simpleCard';
 import { ChevronLeft, CreditCard } from 'lucide-react';
-import { Photo } from './PhotoSales';
+
+interface Photo {
+  id: number;
+  src: string;
+  alt: string;
+  price: number;
+}
 
 interface PurchasePageProps {
   photos: Photo[];
@@ -17,15 +23,16 @@ const PurchasePage: React.FC<PurchasePageProps> = ({ photos }) => {
 
   const photo = photos.find(p => p.id === Number(id));
   
-  if (!photo) {
-    return <div>Photo not found</div>;
+  if (!photo || !type) {
+    return <div>Photo or type not found</div>;
   }
 
+  // Now TypeScript knows type is defined
   const price = type === 'digital' ? photo.price : photo.price * 1.5;
   const total = price * quantity;
+  const capitalizedType = type ? type.charAt(0).toUpperCase() + type.slice(1) : '';
 
   const handlePurchase = () => {
-    // Here you would typically handle the purchase logic
     alert(`Thank you for your purchase of ${quantity} ${type} ${quantity > 1 ? 'copies' : 'copy'} of "${photo.alt}"!`);
     navigate('/');
   };
@@ -37,7 +44,7 @@ const PurchasePage: React.FC<PurchasePageProps> = ({ photos }) => {
       </Button>
       <Card className="max-w-2xl mx-auto">
         <CardContent>
-          <h1 className="text-3xl font-bold text-pink-800 mb-6">Purchase {type.charAt(0).toUpperCase() + type.slice(1)} Photo</h1>
+          <h1 className="text-3xl font-bold text-pink-800 mb-6">Purchase {capitalizedType} Photo</h1>
           <div className="flex mb-6">
             <img src={photo.src} alt={photo.alt} className="w-1/2 h-64 object-cover rounded-lg" />
             <div className="ml-6">
