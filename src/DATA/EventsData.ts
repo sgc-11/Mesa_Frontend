@@ -28,7 +28,7 @@ const mockEvents: FashionEvent[] = [
       { id: 1, name: "Alice Johnson", image: "/api/placeholder/100/100" },
       { id: 2, name: "Bob Smith", image: "/api/placeholder/100/100" },
     ],
-    images: ["src/assets/eventosimg.avif", "src/assets/salonEventosNY.jpeg"],
+    images: ["https://i.postimg.cc/wTgYXjFY/eventosimg.avif", "https://i.postimg.cc/7h4dnK3n/salon-Eventos-NY.jpg"],
   },
   {
     id: 2,
@@ -41,7 +41,7 @@ const mockEvents: FashionEvent[] = [
       { id: 3, name: "Carol Davis", image: "/api/placeholder/100/100" },
       { id: 4, name: "David Brown", image: "/api/placeholder/100/100" },
     ],
-    images: ["src/assets/eventosimg.avif"],
+    images: ["https://i.postimg.cc/wTgYXjFY/eventosimg.avif"],
   },
 ];
 

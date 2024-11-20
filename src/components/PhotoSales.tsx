@@ -11,10 +11,10 @@ export interface Photo {
 }
 
 const photos: Photo[] = [
-  { id: 1, src: 'src/assets/imagesell_2.webp', alt: 'Nature landscape', price: 19.99 },
-  { id: 2, src: 'src/assets/sellImage_3.jpg', alt: 'City skyline', price: 24.99 },
-  { id: 3, src: 'src/assets/imagesell_4.jpg', alt: 'Portrait', price: 29.99 },
-  { id: 4, src: 'src/assets/sellimage_5.jpg', alt: 'Abstract art', price: 34.99 },
+  { id: 1, src: 'https://i.postimg.cc/JzhwFY9T/imagesell-2.webp', alt: 'Nature landscape', price: 19.99 },
+  { id: 2, src: 'https://i.postimg.cc/90BS8y15/sell-Image-3.jpg', alt: 'City skyline', price: 24.99 },
+  { id: 3, src: 'https://i.postimg.cc/mgFxR1gM/imagesell-4.jpg', alt: 'Portrait', price: 29.99 },
+  { id: 4, src: 'https://i.postimg.cc/tCYwtnPf/sellimage-5.jpg', alt: 'Abstract art', price: 34.99 },
 ];
 
 const PhotoSales: React.FC = () => {

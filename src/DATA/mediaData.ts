@@ -10,19 +10,19 @@ export const media: Media[] = [
   {
     id: 1,
     title: "",
-    url: "src/DATA/imagen_pasarela.jpg",
+    url: "https://i.postimg.cc/Y2yy92Vx/imagen-pasarela.webp",
     type: "photo",
   },
   {
     id: 2,
     title: "",
-    url: "src/DATA/maquillaje3.jpg",
+    url: "https://i.postimg.cc/sDQHZdCC/maquillaje3.webp",
     type: "photo",
   },
   {
     id: 3,
     title: "",
-    url: "src/DATA/Download.mp4",
-    type: "video", 
+    url: "https://i.postimg.cc/nLZ35Xjn/modelo-Maquillaje.jpg",
+    type: "photo", 
   },
 ];

@@ -1,18 +1,22 @@
-import React, { useEffect } from 'react';
-import { Button, Card, CardContent, Typography } from '@mui/material';
-import { Media, Model } from './types';
+import React, { useEffect, useState } from 'react';
+import {
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Typography,
+  Box,
+  Grid,
+} from '@mui/material';
+import { DeleteIcon, EditIcon } from 'lucide-react';
+import { Media } from './types';
 import api from '../../api';
 import MediaForm from './Forms/MediaForm';
 
 const MediaList: React.FC = () => {
-  const [mediaItems, setMediaItems] = React.useState<Media[]>([]);
-  const [models, setModels] = React.useState<Model[]>([]);
-  const [open, setOpen] = React.useState(false);
-
-  useEffect(() => {
-    fetchMediaItems();
-    fetchModels();
-  }, []);
+  const [mediaItems, setMediaItems] = useState<Media[]>([]);
+  const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const fetchMediaItems = async () => {
     try {
@@ -23,74 +27,120 @@ const MediaList: React.FC = () => {
     }
   };
 
-  const fetchModels = async () => {
-    try {
-      const response = await api.get('/models'); // Replace with the correct endpoint
-      setModels(response.data);
-    } catch (error) {
-      console.error('Error fetching models:', error);
-    }
-  };
+  useEffect(() => {
+    fetchMediaItems();
+  }, []);
 
   const handleDelete = async (id: string) => {
     try {
       await api.delete(`/media/${id}`);
-      setMediaItems(mediaItems.filter(item => item.id !== id));
+      setMediaItems(mediaItems.filter((media) => media.id !== id));
     } catch (error) {
       console.error('Error deleting media item:', error);
     }
   };
 
-  const handleOpenForm = () => {
-    setOpen(true);
+  const handleEdit = (media: Media) => {
+    setSelectedMedia(media);
+    setIsFormOpen(true);
   };
 
-  const handleCloseForm = () => {
-    setOpen(false);
-  };
-
-  const handleSaveMedia = async (mediaData: Omit<Media, 'id'>) => {
+  const handleSave = async (mediaData: Omit<Media, 'id'>) => {
     try {
-      const response = await api.post('/media', mediaData);
-      setMediaItems([...mediaItems, response.data]);
-      handleCloseForm();
+      if (selectedMedia) {
+        // Update existing media
+        await api.patch(`/media/${selectedMedia.id}`, mediaData);
+      } else {
+        // Create new media
+        await api.post('/media', mediaData);
+      }
+      fetchMediaItems();
+      setIsFormOpen(false);
+      setSelectedMedia(null);
     } catch (error) {
-      console.error('Error creating media item:', error);
+      console.error('Error saving media item:', error);
     }
   };
 
   return (
-    <>
-      <Button variant="contained" onClick={handleOpenForm} sx={{ mb: 2 }}>
-        Add New Media
-      </Button>
+    <Box>
+      <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
+        <Grid item>
+          <Typography variant="h6" sx={{ color: '#d81b60', fontWeight: 'bold' }}>
+            Media Items
+          </Typography>
+        </Grid>
+        <Grid item>
+          <IconButton
+            onClick={() => setIsFormOpen(true)}
+            sx={{
+              backgroundColor: '#f8bbd0',
+              color: '#d81b60',
+              '&:hover': { backgroundColor: '#f48fb1' },
+            }}
+          >
+            +
+          </IconButton>
+        </Grid>
+      </Grid>
+
+      <List>
+        {mediaItems.map((media) => (
+          <ListItem
+            key={media.id}
+            sx={{
+              border: '1px solid #f8bbd0',
+              borderRadius: 2,
+              marginBottom: 1,
+              backgroundColor: '#fff',
+            }}
+            secondaryAction={
+              <>
+                <IconButton
+                  edge="end"
+                  onClick={() => handleEdit(media)}
+                  sx={{
+                    color: '#d81b60',
+                    marginRight: 1,
+                    '&:hover': { color: '#ad1457' },
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+                <IconButton
+                  edge="end"
+                  onClick={() => handleDelete(media.id)}
+                  sx={{
+                    color: '#d81b60',
+                    '&:hover': { color: '#ad1457' },
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </>
+            }
+          >
+            <ListItemText
+              primary={media.description || 'No Description'}
+              secondary={`URL: ${media.url} ${
+                media.price ? `| Price: $${media.price}` : ''
+              } ${media.model ? `| Model: ${media.model.name}` : ''}`}
+              sx={{ color: '#880e4f' }}
+            />
+          </ListItem>
+        ))}
+      </List>
 
       <MediaForm
-        open={open}
-        handleClose={handleCloseForm}
-        handleSave={handleSaveMedia}
-        models={models}
+        open={isFormOpen}
+        initialData={selectedMedia || undefined}
+        handleClose={() => {
+          setIsFormOpen(false);
+          setSelectedMedia(null);
+        }}
+        handleSave={handleSave}
       />
-
-      {mediaItems.map(item => (
-        <Card key={item.id} sx={{ mb: 2 }}>
-          <CardContent>
-            <Typography variant="h6">{item.description || 'No Description'}</Typography>
-            <Typography>URL: {item.url}</Typography>
-            {item.price && <Typography>Price: ${item.price}</Typography>}
-            {item.model && <Typography>Model: {item.model.name}</Typography>}
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => handleDelete(item.id)}
-              sx={{ mt: 1 }}
-            >
-              Delete
-            </Button>
-          </CardContent>
-        </Card>
-      ))}
-    </>
+    </Box>
   );
 };
 
